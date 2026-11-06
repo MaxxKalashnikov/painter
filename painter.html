@@ -1,0 +1,41 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+<div id="bar">
+<div id="tools">
+  <button id="undo" aria-label="Undo"><img src="icons/back.svg" alt=""></button>
+  <button data-tool="pencil" aria-label="Pencil" popovertarget="colors"><img src="icons/pencil.svg" alt=""></button>
+  <button data-tool="eraser" aria-label="Eraser"><img src="icons/eraser.svg" alt=""></button>
+  <select id="size" aria-label="Size">
+    <option value="0">XS</option>
+    <option value="1">S</option>
+    <option value="2">M</option>
+    <option value="3">L</option>
+    <option value="4">XL</option>
+  </select>
+</div>
+<div id="clock" hidden>
+  <button id="stop">Lopeta</button>
+  <div id="timer" role="timer">00:00:00</div>
+</div>
+</div>
+<div id="colors" popover>
+  <button data-color="#000" aria-label="Black" style="background:#000"></button>
+  <button data-color="#e53935" aria-label="Red" style="background:#e53935"></button>
+  <button data-color="#fb8c00" aria-label="Orange" style="background:#fb8c00"></button>
+  <button data-color="#fdd835" aria-label="Yellow" style="background:#fdd835"></button>
+  <button data-color="#43a047" aria-label="Green" style="background:#43a047"></button>
+  <button data-color="#1e88e5" aria-label="Blue" style="background:#1e88e5"></button>
+  <button data-color="#8e24aa" aria-label="Purple" style="background:#8e24aa"></button>
+  <button data-color="#ec407a" aria-label="Pink" style="background:#ec407a"></button>
+</div>
+<div id="frame">
+  <canvas id="canvas-main" width="961" height="993"></canvas>
+  <div id="cover"><button id="start">Aloita</button></div>
+</div>
+<div id="nav">
+  <button id="prev" aria-label="Previous picture"><img src="icons/arrow.svg" alt=""></button>
+  <button id="next" aria-label="Next picture"><img src="icons/arrow.svg" alt=""></button>
+</div>
+<img id="cursor" alt="">
+<script src="painter-scripts.js"></script>
