@@ -53,7 +53,7 @@ const apply = () => {
   tx = w <= fw ? (fw - w) / 2 : Math.min(0, Math.max(fw - w, tx));
   ty = h <= fh ? (fh - h) / 2 : Math.min(0, Math.max(fh - h, ty));
   c.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
-  const { w: iw, h: ih } = images[current], peek = Math.min(iw, ih) * 0.07 * s;
+  const { w: iw, h: ih } = pic, peek = Math.min(iw, ih) * 0.07 * s;
   Object.assign(cover.style, {
     left: tx + (c.width - iw) / 2 * s + peek + 'px',
     top: ty + (c.height - ih) / 2 * s + peek + 'px',
@@ -61,15 +61,12 @@ const apply = () => {
     height: ih * s - 2 * peek + 'px',
   });
 };
-const images = [
-  { src: 'imgs/image.png', w: 621, h: 814 },
-  { src: 'imgs/labyrinthscaled.png', w: 961, h: 993 },
-];
-let current = 0;
+const released = ['a18k2m9x4'];
+let current, pic = { w: 1, h: 1 };
 const refit = () => {
   const fw = frame.clientWidth, fh = frame.clientHeight;
   if (!fw || !fh) return;
-  const { w: IMG_W, h: IMG_H } = images[current];
+  const { w: IMG_W, h: IMG_H } = pic;
   const w = IMG_W + 2 * Math.round(Math.max(0, IMG_H * fw / fh - IMG_W) / 2);
   const h = IMG_H + 2 * Math.round(Math.max(0, IMG_W * fh / fw - IMG_H) / 2);
   if (w !== c.width || h !== c.height) {
@@ -175,20 +172,30 @@ frame.addEventListener('wheel', e => {
   else { tx -= e.deltaX; ty -= e.deltaY; apply(); }
 }, { passive: false });
 
-const showImage = i => {
-  current = (i + images.length) % images.length;
-  clearInterval(ticker);
-  timer.textContent = '00:00:00';
-  clock.hidden = true;
-  cover.hidden = false;
-  stopBtn.disabled = false;
-  ctx.clearRect(0, 0, c.width, c.height);
-  undoStack.length = 0;
-  c.style.backgroundImage = `url('${images[current].src}')`;
-  refit();
+const nav = document.getElementById('nav');
+const showImage = id => {
+  const img = new Image();
+  img.onerror = () => id !== released[0] && showImage(released[0]);
+  img.onload = () => {
+    current = id;
+    pic = { w: img.naturalWidth, h: img.naturalHeight };
+    history.replaceState(null, '', '?p=' + id);
+    nav.hidden = released.length < 2 || !released.includes(id);
+    clearInterval(ticker);
+    timer.textContent = '00:00:00';
+    clock.hidden = true;
+    cover.hidden = false;
+    stopBtn.disabled = false;
+    ctx.clearRect(0, 0, c.width, c.height);
+    undoStack.length = 0;
+    c.style.backgroundImage = `url('${img.src}')`;
+    refit();
+  };
+  img.src = 'imgs/' + id + '.png';
 };
-document.getElementById('prev').onclick = () => showImage(current - 1);
-document.getElementById('next').onclick = () => showImage(current + 1);
-showImage(0);
+const step = d => showImage(released[(released.indexOf(current) + d + released.length) % released.length]);
+document.getElementById('prev').onclick = () => step(-1);
+document.getElementById('next').onclick = () => step(1);
+showImage(new URLSearchParams(location.search).get('p') || released[0]);
 
 document.addEventListener('touchstart', () => {}, { passive: true });
